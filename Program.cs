@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*
+    Karla Santos
+    Exercício baseado no cronômetro do curso "Fundamentos do C#" (balta.io),
+    com melhorias aplicadas para melhor apresentação do código e funcionamento
+    10/10/2020
+*/
+
+using System;
 using System.Threading;
 
 namespace Stopwatch
@@ -18,52 +25,84 @@ namespace Stopwatch
             Console.WriteLine("0 = Sair");
             Console.WriteLine("Quanto tempo deseja contar?");
 
-            string data = Console.ReadLine().ToLower();
+            string valorInformado = Console.ReadLine().ToLower();
 
-            // Importante: Está sendo subtraída uma unidade, porque as posições
-            // começam com 0 e a quantidade de caracteres começa com 1
-            char type = char.Parse(data.Substring(data.Length - 1, 1));
-            int time = int.Parse(data.Substring(0, data.Length - 1));
+            if (valorInformado.Length == 1)
+            {
+                if (valorInformado.Equals("0"))
+                    System.Environment.Exit(0);
+                else
+                {
+                    OpcaoInvalida();
+                }
+            }
+            else
+            {
+                // Importante: Está sendo subtraída uma unidade, porque as posições
+                // começam com 0 e a quantidade de caracteres começa com 1
+                char tipo = char.Parse(valorInformado.Substring(valorInformado.Length - 1, 1));
 
-            int multiplier = 1;
+                if (tipo != 's' && tipo != 'm')
+                {
+                    OpcaoInvalida();
+                }
 
-            if (type == 'm')
-                multiplier = 60;
+                int tempo = 0;
 
-            if (time == 0)
-                System.Environment.Exit(0);
+                try
+                {
+                    tempo = int.Parse(valorInformado.Substring(0, valorInformado.Length - 1));
+                }
+                catch (SystemException erro)
+                {
+                    Console.WriteLine("Caiu no catch");
+                    OpcaoInvalida($"Falha ao converter o tempo informado: '{erro.Message}'");
+                }
 
-            PreStart(time * multiplier);
+                int multiplicador = 1;
+
+                if (tipo == 'm')
+                    multiplicador = 60;
+
+                PreStart(tempo * multiplicador);
+            }
         }
 
-        static void PreStart(int time)
+        static void OpcaoInvalida(string mensagem = "Opção inválida!")
+        {
+            Console.WriteLine(mensagem);
+            Thread.Sleep(2000);
+            Menu();
+        }
+
+        static void PreStart(int tempo)
         {
             Console.Clear();
-            Console.WriteLine("Ready...");
+            Console.WriteLine("Preparar...");
             Thread.Sleep(1000);
-            Console.WriteLine("Set...");
+            Console.WriteLine("Apontar...");
             Thread.Sleep(1000);
-            Console.WriteLine("Go...");
-            Thread.Sleep(2500);
+            Console.WriteLine("Começar!");
+            Thread.Sleep(1500);
 
-            Start(time);
+            Start(tempo);
         }
-        static void Start(int time)
+        static void Start(int totalSegundos)
         {
-            int currentTime = 0;
+            int segundoAtual = totalSegundos;
 
-            while (currentTime != time)
+            while (segundoAtual > 0)
             {
                 Console.Clear();
-                currentTime++;
-                Console.WriteLine(currentTime);
+                Console.WriteLine(segundoAtual);
+                segundoAtual--;
 
                 Thread.Sleep(1000); // Dormir por um segundo
             }
 
             Console.Clear();
-            Console.WriteLine("Stopwatch finalizado");
-            Thread.Sleep(2500);
+            Console.WriteLine("Cronômetro finalizado");
+            Thread.Sleep(1500);
 
             Menu();
         }
